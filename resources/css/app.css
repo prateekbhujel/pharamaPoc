@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+
+    body {
+        font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+        background:
+            radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 24%),
+            radial-gradient(circle at top right, rgba(251, 113, 133, 0.14), transparent 20%),
+            linear-gradient(180deg, #f7f9ff 0%, #eef4ff 100%);
+        color: #0f172a;
+    }
+
+    .font-display {
+        font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    }
+}
+
+@layer components {
+    .workspace-shell {
+        @apply min-h-screen gap-6 px-4 py-4 lg:grid lg:grid-cols-[290px_minmax(0,1fr)] lg:px-5 lg:py-5;
+    }
+
+    .workspace-sidebar {
+        @apply lg:sticky lg:top-5 lg:self-start;
+    }
+
+    .workspace-main {
+        @apply min-w-0 pb-6;
+    }
+
+    .glass-panel {
+        @apply rounded-[2rem] border border-slate-200/80 bg-white/90 shadow-[0_22px_60px_rgba(15,23,42,0.08)] backdrop-blur;
+    }
+
+    .eyebrow {
+        @apply text-[0.72rem] font-bold uppercase tracking-[0.28em] text-teal-700;
+    }
+
+    .metric-card {
+        @apply rounded-[1.6rem] border border-slate-200/80 bg-slate-50/90 p-4 shadow-sm;
+    }
+
+    .metric-label {
+        @apply text-[0.72rem] font-bold uppercase tracking-[0.2em] text-slate-500;
+    }
+
+    .metric-value {
+        @apply mt-3 text-2xl font-semibold text-slate-950;
+    }
+
+    .tab-chip {
+        @apply flex w-full items-center justify-between rounded-[1.25rem] border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:border-white/20 hover:bg-white/10 hover:text-white;
+    }
+
+    .tab-chip-active {
+        @apply border-white bg-white text-[#21345b] shadow-sm;
+    }
+
+    .data-table-shell {
+        @apply overflow-hidden rounded-[1.8rem] border border-slate-200/80 bg-white;
+    }
+
+    .field-shell {
+        @apply flex flex-col gap-2 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-4 shadow-[0_10px_24px_rgba(15,23,42,0.04)];
+    }
+
+    .field-label {
+        @apply text-[0.72rem] font-bold uppercase tracking-[0.22em] text-slate-500;
+    }
+
+    .field-input {
+        @apply min-h-[2.9rem] w-full border-0 bg-transparent px-0 py-0 text-sm font-medium text-slate-900 outline-none ring-0 placeholder:text-slate-400 focus:border-0 focus:outline-none focus:ring-0;
+    }
+
+    .field-input-nepali {
+        @apply rounded-xl bg-white px-0;
+        font-family: 'Noto Sans Devanagari', 'Manrope', sans-serif;
+    }
+
+    .data-pill {
+        @apply rounded-[1.4rem] bg-slate-50 px-4 py-4;
+    }
+
+    .data-pill-label {
+        @apply block text-[0.72rem] font-bold uppercase tracking-[0.22em] text-slate-500;
+    }
+
+    .data-pill-value {
+        @apply mt-3 block text-sm font-semibold text-slate-900;
+    }
+}
