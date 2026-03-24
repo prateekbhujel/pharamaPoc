@@ -1,34 +1,54 @@
 # pharamaPOC
 
-This project is a pharmacy reporting demo built with Laravel and React.
+I built `pharamaPOC` to showcase how I handle large pharmacy reporting data in a way that still feels like a real product, not just a benchmark script.
 
-The goal is simple:
+My main goal in this project was simple:
 
-- log in with an organization-based account
-- filter pharmacy sales with AD and BS dates
-- preview rows in a paginated table
-- download Excel files without leaving the app
-- create, edit, and delete sales
-- create and edit pharmacies from the same app
+- handle large multi-organization pharmacy data
+- keep the UI understandable for normal users
+- support preview, CRUD, filters, and exports from one place
+- show how I think about performance, structure, and developer experience together
 
-## What Is Inside
+## What I Built
 
-- Laravel API routes under `/api/v1/*`
-- React app served from `/`
-- session login with Laravel Sanctum
-- Nepali date picker with BS to AD sync
-- report preview with server-side pagination
-- background Excel export flow for reports
-- direct streaming Excel downloads for sales and pharmacy lists
-- sales CRUD with sample import format
+This project is a Laravel + React pharmacy management and reporting system.
+
+Inside it, I built:
+
+- organization-based login
+- hospital and pharmacy scoped access
+- sales CRUD
 - pharmacy CRUD
-- Swagger docs
+- large dataset seeding
+- server-side report preview with pagination
+- Excel export flow with background preparation
+- Swagger docs for the API
+
+## Why I Built It This Way
+
+I wanted this repo to show my thinking, not only the final screen.
+
+So I made a few deliberate choices:
+
+- I used Laravel modules so the backend stays clean and easy to follow.
+- I kept React separate from the API flow so the frontend and backend are still clearly divided.
+- I used Postgres raw SQL and set-based inserts where scale matters, because looping everything in PHP is not the right answer for huge data.
+- I used a streaming XLSX writer path instead of a heavier Excel flow, because large workbook generation needs lower memory overhead.
+- I kept the Excel logic inside this app instead of turning it into a separate package, because this repository is meant to showcase the end-to-end system I built, not a standalone library.
+- I kept the README in first person because I want this project to read like my work and my decisions.
+
+## Tech Stack
+
+- Laravel 12
+- React
+- PostgreSQL
+- Laravel Sanctum
+- OpenSpout
+- Vite
 
 ## Project Shape
 
-The code is kept in simple module folders.
-
-Example structure:
+I kept the backend in simple module folders so the structure stays familiar and readable.
 
 ```text
 app/Modules/
@@ -41,7 +61,7 @@ app/Modules/
 └── User/
 ```
 
-Each module stays small and familiar:
+Inside each module I mostly follow this structure:
 
 - `Http/Controllers`
 - `Http/Requests`
@@ -52,11 +72,11 @@ Each module stays small and familiar:
 - `Routes`
 - `Providers`
 
-## Local Run
+## Local Setup
 
-This project uses local Postgres on `127.0.0.1:6464`.
+I used local Postgres on `127.0.0.1:6464`.
 
-Install everything:
+To install everything:
 
 ```bash
 composer install
@@ -64,33 +84,21 @@ npm install
 php artisan migrate:fresh --seed
 ```
 
-One command to prepare the whole app after dependencies are installed:
+I also added one prepare command so I can bootstrap the whole project quickly:
 
 ```bash
 php artisan prepare
 ```
 
-That command can:
+That command handles:
 
-- migrate the database fresh
-- seed login data
-- generate Swagger docs
-- scale report rows
-- build the frontend
+- fresh migration
+- seeding
+- Swagger generation
+- report row scaling
+- frontend build
 
-After that, I can benchmark the direct export lanes with:
-
-```bash
-php artisan sales:benchmark-export
-```
-
-I can benchmark the workbook pipeline with:
-
-```bash
-php artisan reporting:benchmark-workbook --date-from=2026-03-01 --date-to=2026-03-23
-```
-
-Example with a larger system shape:
+If I want a larger seeded shape:
 
 ```bash
 php artisan prepare --rows=5000000 --organizations=400 --hospitals-min=4 --hospitals-max=8 --pharmacies-min=3 --pharmacies-max=6
@@ -109,16 +117,16 @@ That starts:
 - log tail
 - Vite dev server
 
-If you want Laravel to serve the built React app directly:
+If I want Laravel to serve the built React app directly:
 
 ```bash
 npm run build
 php artisan serve
 ```
 
-## Login
+## Demo Logins
 
-All seeded demo accounts use this password:
+All seeded demo accounts use:
 
 ```text
 password
@@ -132,7 +140,9 @@ Useful accounts:
 
 ## Demo Data
 
-The seed creates a large sample set with:
+I prepared the seed to look closer to a real pharmacy system instead of random tiny fake rows.
+
+The default dataset includes:
 
 - `200` organizations
 - `500` hospitals
@@ -144,68 +154,56 @@ The seed creates a large sample set with:
 - `45000` sales
 - `135000` sale items
 
-The sale timeline spans about `15` years.
+The data timeline spans about `15` years.
 
-If you want more local data, increase this value in `.env` and reseed:
+If I want to increase the base seeded sales count, I can change this in `.env`:
 
 ```text
 PHARMACY_SALES_TARGET=45000
 ```
 
-If you want a very large benchmark dataset only:
+If I want a very large benchmark dataset:
 
 ```bash
 php artisan reporting:seed-scale 100000000 --batch=500000
 ```
 
-The seeder can also shape the system bigger:
-
-- more organizations
-- more hospitals per organization
-- more pharmacies per hospital
-- millions of sales rows through the scale command
+That lets me simulate millions of sales/report rows without manually looping inserts one by one in PHP.
 
 ## Main Pages
 
 `Dashboard`
 
-- see totals quickly
-- check current login scope
-- open reports or pharmacy work
-- review recent export files
+- I use this to see totals quickly.
+- I can check the current login scope here.
+- I can jump into reports, pharmacy work, and recent exports from here.
 
 `Reports`
 
-- choose date range
-- use AD and BS dates together
-- filter by organization, hospital, pharmacy, category, supplier, payment status, and cold chain
-- preview paginated rows
-- use one Excel download button
-- start a background Excel job and keep working while it prepares
-- watch progress in the UI and auto-download the file when it is ready
+- I can filter by date, organization, hospital, pharmacy, category, supplier, payment status, and cold chain.
+- I can work with both AD and BS dates.
+- I can preview rows with server-side pagination.
+- I can start an Excel export and keep using the app while it prepares in the background.
 
 `Pharmacies`
 
-- create a pharmacy in a modal
-- edit a pharmacy in a modal
-- delete with a confirmation modal
-- search and filter pharmacies
-- use one Excel download button for the pharmacy list
-- optionally add a demo sale so the pharmacy shows in preview/export quickly
+- I can create and edit pharmacies in a modal.
+- I can search and filter the list.
+- I can delete with confirmation.
+- I can export the pharmacy list to Excel.
 
 `Sales`
 
-- create a sale in a modal
-- edit or delete a sale in place
-- search by invoice, patient, pharmacy, or medicine
-- use one Excel download button for the current sales filter
-- download a sample CSV format for imports or manual prep
+- I can create, edit, and delete sales.
+- I can search by invoice, patient, pharmacy, or medicine.
+- I can download a sample CSV format for import/reference.
+- I can export the filtered sales data to Excel.
 
 `Exports`
 
-- see the latest running job
-- download finished files
-- review recent export history
+- I can see the latest running export job.
+- I can track progress.
+- I can download completed files.
 
 ## API Routes
 
@@ -243,13 +241,13 @@ Sales:
 
 ## Swagger Docs
 
-Generate docs:
+To generate docs:
 
 ```bash
 composer run docs:generate
 ```
 
-Open docs in browser:
+To open docs in browser:
 
 ```text
 /docs/swagger
@@ -259,14 +257,52 @@ Generated file:
 
 [`public/docs/openapi-v1.json`](/Applications/XAMPP/xamppfiles/htdocs/phar_poc/public/docs/openapi-v1.json)
 
-## Notes
+## Performance Notes
 
-- Report Excel speed comes from Postgres `COPY` extracting to CSV first, then a streaming XLSX writer building the workbook row by row.
-- The report preview flow now warms the Excel export in the background, so the actual download click can reuse work that already started.
-- Report export jobs run on Laravel's `background` queue connection, so I do not need a separate queue worker just to see progress in the UI.
-- Direct report, sales, and pharmacy Excel downloads now use the same streaming workbook builder instead of the heavier old Excel stack.
-- True huge XLSX files will still be slower than raw CSV because Excel itself is a zipped workbook format, but this setup removes the slowest PHP overhead from the old path.
-- The preview table is paginated on the server, so the browser only gets one page at a time.
-- Delete is blocked when a pharmacy already has sales.
-- Sales create, update, and delete sync into the live reporting overlay so preview and export change right away.
-- The app still uses some older table names in SQL for compatibility, but the UI speaks in organization and hospital terms.
+This is the part I cared about the most.
+
+I did not want export performance to depend only on queues and hope.
+I wanted the data path itself to be stronger.
+
+So here is what I did:
+
+- I used Postgres raw SQL for heavy reporting work.
+- I used `COPY` for fast CSV generation from the database side.
+- I used a streaming XLSX path so workbook generation does not try to hold everything in memory.
+- I used server-side pagination so the browser only receives one page at a time.
+- I used background export preparation so the UI feels responsive while the file is being built.
+- I used large-scale seed commands so I can test the system against serious row counts.
+
+At the same time, I also know the honest limit:
+
+- real huge `.xlsx` files will always be slower than raw CSV
+- Excel itself is a zipped workbook format, so there is unavoidable overhead
+- for massive exports, the best improvement is not only “better PHP code”, but also prewarming, caching, and smarter reuse of prepared files
+
+## Benchmarks
+
+I added benchmark commands so I can measure instead of guessing.
+
+Direct export benchmark:
+
+```bash
+php artisan sales:benchmark-export
+```
+
+Workbook benchmark:
+
+```bash
+php artisan reporting:benchmark-workbook --date-from=2026-03-01 --date-to=2026-03-23
+```
+
+## Final Note
+
+I built this project to show that I can take a messy real-world reporting problem and turn it into:
+
+- a cleaner backend structure
+- a usable frontend
+- realistic seeded data
+- measurable performance work
+- and a project another developer can open and understand
+
+That is what I wanted `pharamaPOC` to represent.
